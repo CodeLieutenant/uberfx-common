@@ -2,15 +2,9 @@ name: "Testing"
 
 on:
   push:
-    paths:
-      - "pkg/**"
-      - "main.go"
     branches:
       - master
   pull_request:
-    paths:
-      - "pkg/**"
-      - "main.go"
     branches:
       - master
 
