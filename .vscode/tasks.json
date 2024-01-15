@@ -1,0 +1,66 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "App: Hot Reload",
+      "type": "shell",
+      "command": "air",
+      "isBackground": true,
+      "args": ["-c", ".air.toml"],
+      "problemMatcher": []
+    },
+    {
+      "label": "App: Race Test",
+      "type": "shell",
+      "command": "go",
+      "args": [
+        "test",
+        "-race",
+        "-v",
+        "-covermode=atomic",
+        "-timeout",
+        "5m",
+        "./..."
+      ],
+      "group": "test"
+    },
+    {
+      "label": "App: Test",
+      "type": "shell",
+      "command": "go",
+      "args": ["test", "-v", "-covermode=atomic", "-timeout", "5m", "./..."],
+      "group": "test"
+    },
+    {
+      "label": "App: Format",
+      "type": "shell",
+      "command": "gofumpt",
+      "args": ["-l", "-w", "."],
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "App: Lint",
+      "type": "shell",
+      "command": "golangci-lint",
+      "args": ["run"],
+      "group": "none"
+    },
+    {
+      "label": "LiiftEngine: GoMod Tidy",
+      "type": "shell",
+      "command": "go",
+      "args": ["mod", "tidy"],
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "LiiftEngine: Security Check",
+      "type": "shell",
+      "command": "gosec",
+      "args": ["./..."],
+      "group": "none",
+      "problemMatcher": []
+    }
+  ]
+}
