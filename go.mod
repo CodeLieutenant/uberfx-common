@@ -3,7 +3,7 @@ module github.com/dmalusev/uberfx-common
 go 1.21
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/gofiber/fiber/v2 v2.52.1
 	github.com/invopop/validation v0.3.0
 	github.com/nano-interactive/go-utils v1.8.0
 	github.com/rs/zerolog v1.31.0
