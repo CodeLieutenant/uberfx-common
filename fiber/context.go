@@ -5,7 +5,7 @@ import (
 
 	gofiber "github.com/gofiber/fiber/v2"
 
-	"github.com/dmalusev/uberfx-common/constants"
+	"github.com/dmalusev/uberfx-common/v2/constants"
 )
 
 func Context() gofiber.Handler {

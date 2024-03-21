@@ -12,7 +12,7 @@ import (
 	"github.com/samber/lo"
 	"go.uber.org/fx"
 
-	corehttp "github.com/dmalusev/uberfx-common/fiber"
+	corehttp "github.com/dmalusev/uberfx-common/v2/fiber"
 )
 
 type (
