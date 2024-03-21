@@ -33,7 +33,7 @@ func RunServer(ip string, port int, app *gofiber.App) {
 	}
 }
 
-func CreateApplication(appName string, displayInfo bool, logger zerolog.Logger) *gofiber.App {
+func CreateApplication(appName string, displayInfo bool, logger zerolog.Logger, errorHandler gofiber.ErrorHandler) *gofiber.App {
 	var (
 		jsonEncoder fiberutils.JSONMarshal   = json.Marshal
 		jsonDecoder fiberutils.JSONUnmarshal = json.Unmarshal
@@ -48,7 +48,7 @@ func CreateApplication(appName string, displayInfo bool, logger zerolog.Logger) 
 		DisableHeaderNormalizing:     false,
 		DisablePreParseMultipartForm: true,
 		AppName:                      appName,
-		ErrorHandler:                 Error(logger),
+		ErrorHandler:                 Error(logger, errorHandler),
 		JSONEncoder:                  jsonEncoder,
 		JSONDecoder:                  jsonDecoder,
 	}

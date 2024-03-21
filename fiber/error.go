@@ -9,12 +9,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+var ErrDefaultHandler = errors.New("default handler")
+
 type ErrorResponse struct {
 	Message any `json:"message,omitempty"`
 }
 
-func Error(logger zerolog.Logger) gofiber.ErrorHandler {
+func Error(logger zerolog.Logger, handler gofiber.ErrorHandler) gofiber.ErrorHandler {
 	return func(c *gofiber.Ctx, err error) error {
+		if handler != nil {
+			if err = handler(c, err); !errors.Is(err, ErrDefaultHandler) {
+				return err
+			}
+		}
+
 		c.Set(gofiber.HeaderContentType, gofiber.MIMEApplicationJSONCharsetUTF8)
 
 		if errors.Is(err, primitive.ErrInvalidHex) {

@@ -47,7 +47,7 @@ func RunApp(addr, appName string, shutdownTimeout time.Duration) fx.Option {
 	)))
 }
 
-func App(appName string, displayInfo bool, routes RoutesFx) fx.Option {
+func App(appName string, displayInfo bool, routes RoutesFx, errorHandler fiber.ErrorHandler) fx.Option {
 	return fx.Module(fmt.Sprintf("fiber-%s", appName),
 		fx.Provide(fx.Annotate(
 			func() routerCallbacks {
@@ -59,7 +59,7 @@ func App(appName string, displayInfo bool, routes RoutesFx) fx.Option {
 
 		fx.Provide(fx.Annotate(
 			func(logger zerolog.Logger, handlers []route, cb routerCallbacks, lc fx.Lifecycle) *fiber.App {
-				app := corehttp.CreateApplication(appName, displayInfo, logger)
+				app := corehttp.CreateApplication(appName, displayInfo, logger, errorHandler)
 
 				for _, r := range handlers {
 					router := app.Group(r.Prefix)
