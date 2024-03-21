@@ -18,8 +18,8 @@ type ErrorResponse struct {
 func Error(logger zerolog.Logger, handler gofiber.ErrorHandler) gofiber.ErrorHandler {
 	return func(c *gofiber.Ctx, err error) error {
 		if handler != nil {
-			if err = handler(c, err); !errors.Is(err, ErrDefaultHandler) {
-				return err
+			if errH := handler(c, err); !errors.Is(errH, ErrDefaultHandler) {
+				return errH
 			}
 		}
 
@@ -31,12 +31,13 @@ func Error(logger zerolog.Logger, handler gofiber.ErrorHandler) gofiber.ErrorHan
 			})
 		}
 
-		var fiberErr *gofiber.Error
-
-		if errors.As(err, &fiberErr) {
-			return c.Status(fiberErr.Code).JSON(ErrorResponse{
-				Message: fiberErr.Message,
-			})
+		{
+			var fiberErr *gofiber.Error
+			if errors.As(err, &fiberErr) {
+				return c.Status(fiberErr.Code).JSON(ErrorResponse{
+					Message: fiberErr.Message,
+				})
+			}
 		}
 
 		{
