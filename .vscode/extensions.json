@@ -27,6 +27,15 @@
     "GitHub.vscode-pull-request-github",
     "ms-vscode.remote-repositories",
     "ms-vsliveshare.vsliveshare",
-    "aaron-bond.better-comments"
+    "aaron-bond.better-comments",
+    "mikestead.dotenv",
+    "k--kato.intellij-idea-keybindings",
+    "ms-vscode-remote.remote-ssh",
+    "ms-vscode-remote.remote-ssh-edit",
+    "ms-vscode-remote.vscode-remote-extensionpack",
+    "EditorConfig.EditorConfig",
+    "codezombiech.gitignore",
+    "hbenl.vscode-test-explorer",
+    "JordanHury.sqltools-cassandra"
   ]
 }
