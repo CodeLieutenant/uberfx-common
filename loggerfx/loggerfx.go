@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/nano-interactive/go-utils"
-	appLogger "github.com/nano-interactive/go-utils/logging"
+	"github.com/nano-interactive/go-utils/v2"
+	appLogger "github.com/nano-interactive/go-utils/v2/logging"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/pkgerrors"
 	"go.uber.org/fx"
@@ -35,10 +35,10 @@ var (
 	ErrInvalidSinkType          = errors.New("invalid sink type")
 )
 
-func Module(sink Sink) fx.Option {
+func ZerologModule(sink Sink) fx.Option {
 	return fx.Module("ZerologLogger", fx.Provide(
 		func(lc fx.Lifecycle) (zerolog.Logger, error) {
-			w, closer, err := getWriter(sink)
+			w, closer, err := getZerologWriter(sink)
 			if err != nil {
 				return zerolog.Logger{}, err
 			}
@@ -54,7 +54,7 @@ func Module(sink Sink) fx.Option {
 				Logger(), nil
 		}),
 		fx.Invoke(func(lc fx.Lifecycle) error {
-			w, closer, err := getWriter(sink)
+			w, closer, err := getZerologWriter(sink)
 			if err != nil {
 				return err
 			}
@@ -72,7 +72,7 @@ func Module(sink Sink) fx.Option {
 	)
 }
 
-func getWriter(sink Sink) (io.Writer, func() error, error) {
+func getZerologWriter(sink Sink) (io.Writer, func() error, error) {
 	switch sink.Type {
 	case Stdout:
 		if sink.PrettyPrint {
