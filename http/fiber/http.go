@@ -22,7 +22,6 @@ func RunServer(ip string, port int, app *gofiber.App) {
 	}
 
 	err = app.Listener(listener)
-
 	if err != nil {
 		log.
 			Fatal().
@@ -31,6 +30,7 @@ func RunServer(ip string, port int, app *gofiber.App) {
 	}
 }
 
+//nolint:gochecknoglobals
 var DefaultFiberConfig = gofiber.Config{
 	StrictRouting:                true,
 	EnablePrintRoutes:            false,

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/rs/zerolog"
 	"go.uber.org/fx"
 
 	corehttp "github.com/CodeLieutenant/uberfx-common/v3/http/fiber"
@@ -23,20 +22,17 @@ func routerCallbacksName(appName string) string {
 }
 
 func RunApp(addr, appName string, shutdownTimeout time.Duration) fx.Option {
-	return fx.Invoke(fx.Annotate(func(app *fiber.App, logger zerolog.Logger, lc fx.Lifecycle) {
-		lc.Append(fx.Hook{
-			OnStart: func(ctx context.Context) error {
-				logger.Info().Str("app", appName).Msg("Starting Fiber Application")
+	return fx.Invoke(fx.Annotate(func(app *fiber.App, lc fx.Lifecycle) {
+		lc.Append(fx.StartStopHook(
+			func() {
 				go func() { _ = app.Listen(addr) }()
-				return nil
 			},
-			OnStop: func(ctx context.Context) error {
+			func(ctx context.Context) error {
 				newCtx, cancel := context.WithTimeout(ctx, shutdownTimeout)
 				defer cancel()
-				logger.Info().Str("app", appName).Msg("Stopping Fiber Application")
 				return app.ShutdownWithContext(newCtx)
 			},
-		})
+		))
 	}, fx.ParamTags(
 		GetFiberApp(appName),
 		`optional:"true"`,
@@ -56,7 +52,7 @@ func App(appName string, routes RoutesFx, options ...Option) fx.Option {
 		opt(&opts)
 	}
 
-	return fx.Module(fmt.Sprintf("fiber-%s", appName),
+	return fx.Module("fiber-"+appName,
 		fx.Provide(fx.Annotate(
 			func() routerCallbacks {
 				return make(routerCallbacks)
@@ -65,7 +61,7 @@ func App(appName string, routes RoutesFx, options ...Option) fx.Option {
 		)),
 		routes(appName),
 		fx.Provide(fx.Annotate(
-			func(logger zerolog.Logger, handlers []route, cb routerCallbacks, lc fx.Lifecycle) *fiber.App {
+			func(handlers []route, cb routerCallbacks) *fiber.App {
 				app := corehttp.CreateApplication(opts.afterCreate, opts.cfg)
 
 				for _, r := range handlers {

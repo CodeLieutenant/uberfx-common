@@ -2,6 +2,7 @@ package fiber
 
 import (
 	"errors"
+
 	"github.com/rs/zerolog/log"
 
 	gofiber "github.com/gofiber/fiber/v2"

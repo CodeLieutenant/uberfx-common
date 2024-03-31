@@ -3,9 +3,12 @@ package databasesfx
 import (
 	"context"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
 	"io/fs"
+	"net"
+	"strconv"
 	"time"
+
+	"github.com/golang-migrate/migrate/v4"
 
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -67,12 +70,12 @@ func PostgresMigrationsModule(mig fs.FS, cfg PostgresConfig, migrations string) 
 }
 
 func (p *PostgresConfig) MigrationConnectionString() string {
+	host := net.JoinHostPort(p.Host, strconv.FormatInt(int64(p.Port), 10))
 	return fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s?search_path=%s&sslmode=%s&application_name=%s&x-migrations-table=migrations&x-multi-statements=true",
+		"postgres://%s:%s@%s/%s?search_path=%s&sslmode=%s&application_name=%s&x-migrations-table=migrations&x-multi-statements=true",
 		p.Username,
 		p.Password,
-		p.Host,
-		p.Port,
+		host,
 		p.DBName,
 		p.Schema,
 		p.SslMode,

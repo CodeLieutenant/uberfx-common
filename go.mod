@@ -3,7 +3,7 @@ module github.com/CodeLieutenant/uberfx-common/v3
 go 1.22
 
 require (
-	github.com/goccy/go-json v0.9.11
+	github.com/goccy/go-json v0.10.2
 	github.com/gofiber/fiber/v2 v2.52.4
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/invopop/validation v0.3.0
