@@ -4,8 +4,8 @@ import "github.com/gofiber/fiber/v2"
 
 type (
 	appOptions struct {
-		cfg         fiber.Config
 		afterCreate func(app *fiber.App)
+		cfg         fiber.Config
 	}
 
 	Option func(opts *appOptions)

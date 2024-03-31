@@ -10,8 +10,8 @@ type (
 	RouteOptions func(*routeOptions)
 
 	routeOptions struct {
-		prefix string
 		cb     func(fiber.Router)
+		prefix string
 	}
 )
 

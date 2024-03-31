@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
-
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/fx"
