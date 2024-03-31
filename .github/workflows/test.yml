@@ -18,6 +18,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+      - uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
       - uses: actions/setup-go@v4
         with:
           go-version: ${{ matrix.go }}
@@ -30,3 +36,8 @@ jobs:
         run: |
           go install github.com/gotesttools/gotestfmt/v2/cmd/gotestfmt@latest
           task test
+			- name: Upload coverage reports to Codecov
+			  uses: codecov/codecov-action@v4.0.1
+			  with:
+			    token: ${{ secrets.CODECOV_TOKEN }}
+			    slug: CodeLieutenant/uberfx-common

@@ -1,0 +1,13 @@
+on: [push, pull_request]
+name: Security
+jobs:
+  Gosec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run Gosec
+        uses: securego/gosec@master
+        with:
+          args: ./...
