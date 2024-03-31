@@ -2,6 +2,7 @@ package fiber
 
 import (
 	"errors"
+	"github.com/rs/zerolog/log"
 
 	gofiber "github.com/gofiber/fiber/v2"
 	"github.com/invopop/validation"
@@ -15,7 +16,11 @@ type ErrorResponse struct {
 	Message any `json:"message,omitempty"`
 }
 
-func Error(logger zerolog.Logger, handler gofiber.ErrorHandler) gofiber.ErrorHandler {
+func ErrorHandler() gofiber.ErrorHandler {
+	return ErrorHandlerWithCustomHandler(log.Logger, nil)
+}
+
+func ErrorHandlerWithCustomHandler(logger zerolog.Logger, handler gofiber.ErrorHandler) gofiber.ErrorHandler {
 	return func(c *gofiber.Ctx, err error) error {
 		if handler != nil {
 			if errH := handler(c, err); !errors.Is(errH, ErrDefaultHandler) {

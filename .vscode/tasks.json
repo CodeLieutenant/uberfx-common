@@ -47,7 +47,7 @@
       "group": "none"
     },
     {
-      "label": "LiiftEngine: GoMod Tidy",
+      "label": "App: GoMod Tidy",
       "type": "shell",
       "command": "go",
       "args": ["mod", "tidy"],
@@ -55,7 +55,7 @@
       "problemMatcher": []
     },
     {
-      "label": "LiiftEngine: Security Check",
+      "label": "App: Security Check",
       "type": "shell",
       "command": "gosec",
       "args": ["./..."],

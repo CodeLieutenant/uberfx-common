@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/dmalusev/uberfx-common/v2/constants"
-	"github.com/dmalusev/uberfx-common/v2/fiber"
+	"github.com/CodeLieutenant/uberfx-common/v3/constants"
+	"github.com/CodeLieutenant/uberfx-common/v3/http/fiber"
 )
 
 func TestContextMiddleware(t *testing.T) {
