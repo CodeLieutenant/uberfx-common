@@ -3,19 +3,23 @@ run:
   timeout: 5m
   issues-exit-code: 1
   tests: true
+  go: '1.22'
+  modules-download-mode: mod
+  allow-parallel-runners: true
 
-skip-dirs:
-  - docs/
-
-skip-files:
-  - "*_gen\\.go$"
-
-modules-download-mode: mod
-allow-parallel-runners: true
-go: '1.22'
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+  exclude-files:
+    - .*_gen\.go$
+    - .*setup\.go$
 
 output:
-  format: colored-line-number
   print-issued-lines: true
   print-linter-name: true
   uniq-by-line: true
@@ -39,7 +43,6 @@ linters:
     - gofumpt
     - ginkgolinter
     - gocheckcompilerdirectives
-    - gochecknoglobals
     - gocognit
     - goconst
     - gocritic
