@@ -8,7 +8,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/invopop/validation v0.3.0
 	github.com/jackc/pgx/v5 v5.5.5
-	github.com/nano-interactive/go-amqp/v3 v3.1.0
+	github.com/nano-interactive/go-amqp/v3 v3.2.0
 	github.com/nano-interactive/go-utils/v2 v2.0.12
 	github.com/rabbitmq/amqp091-go v1.9.0
 	github.com/rs/zerolog v1.32.0

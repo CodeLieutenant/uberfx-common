@@ -87,7 +87,13 @@ func c[T consumer.Message](
 		}, fx.ResultTags(`name:"`+name+`"`))),
 		fx.Invoke(fx.Annotate(func(lc fx.Lifecycle, c consumer.Consumer[T]) {
 			lc.Append(fx.StartStopHook(
-				c.Start,
+				func(ctx context.Context) {
+					go func() {
+						if err := c.Start(ctx); err != nil {
+							panic(err)
+						}
+					}()
+				},
 				c.CloseWithContext,
 			))
 		},
