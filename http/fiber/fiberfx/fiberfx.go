@@ -25,7 +25,11 @@ func RunApp(addr, appName string, shutdownTimeout time.Duration) fx.Option {
 	return fx.Invoke(fx.Annotate(func(app *fiber.App, lc fx.Lifecycle) {
 		lc.Append(fx.StartStopHook(
 			func() {
-				go func() { _ = app.Listen(addr) }()
+				go func() {
+					if err := app.Listen(addr); err != nil {
+						panic(err)
+					}
+				}()
 			},
 			func(ctx context.Context) error {
 				newCtx, cancel := context.WithTimeout(ctx, shutdownTimeout)
