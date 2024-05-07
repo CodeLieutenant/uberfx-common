@@ -41,6 +41,9 @@ func PublisherModule[T any](
 
 		return pub, err
 	},
-		fx.ResultTags(GetPublisherParamName(connectionOptions.ConnectionName, exchangeName)), fx.As(new(publisher.Pub[T])),
+		fx.ResultTags(
+			GetPublisherParamName(connectionOptions.ConnectionName, exchangeName)),
+			fx.As(new(publisher.Pub[T]),
+		),
 	)))
 }
