@@ -43,11 +43,13 @@ func Routes(routes []RouteFx, opts ...RouteOptions) RoutesFx {
 			return fx.Options(options...)
 		}
 
-		return fx.Options(append(options, fx.Invoke(fx.Annotate(
-			func(callbacks routerCallbacks) {
-				callbacks[opt.prefix] = opt.cb
+		options = append(options, fx.Invoke(fx.Annotate(
+			func(cbs *routerCallbacks) {
+				cbs.Add(opt.prefix, opt.cb)
 			},
 			fx.ParamTags(routerCallbacksName(appName)),
-		)))...)
+		)))
+
+		return fx.Options(options...)
 	}
 }

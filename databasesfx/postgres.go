@@ -8,9 +8,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
+
+	"github.com/golang-migrate/migrate/v4"
+	migratepgx "github.com/golang-migrate/migrate/v4/database/pgx/v5"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
+
 	"go.uber.org/fx"
 )
 
@@ -31,13 +36,31 @@ type PostgresConfig struct {
 	Port                  uint16        `required:"true" default:"5432" mapstructure:"port" yaml:"port" json:"port"`
 }
 
-func New(fs fs.FS, cfg PostgresConfig, migrations string) (*migrate.Migrate, error) {
+func NewPostgresMigrations(fs fs.FS, cfg PostgresConfig, migrations, migrationsTable string) (*migrate.Migrate, error) {
 	sourceDriver, err := iofs.New(fs, migrations)
 	if err != nil {
 		return nil, err
 	}
 
-	return migrate.NewWithSourceInstance("iofs", sourceDriver, cfg.MigrationConnectionString())
+	pgxConfig, err := pgx.ParseConfig(cfg.ConnectionString())
+	if err != nil {
+		return nil, err
+	}
+
+	db, err := migratepgx.WithInstance(stdlib.OpenDB(*pgxConfig), &migratepgx.Config{
+		MigrationsTable:       migrationsTable,
+		DatabaseName:          cfg.DBName,
+		SchemaName:            cfg.Schema,
+		StatementTimeout:      60 * time.Second,
+		MigrationsTableQuoted: false,
+		MultiStatementEnabled: true,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return migrate.NewWithInstance("iofs", sourceDriver, "pgx5", db)
 }
 
 func PostgresModule(cfg PostgresConfig) fx.Option {
@@ -63,15 +86,19 @@ func PostgresModule(cfg PostgresConfig) fx.Option {
 func PostgresMigrationsModule(mig fs.FS, cfg PostgresConfig, migrations string) fx.Option {
 	return fx.Module("Databases-Postgres-Migrations",
 		fx.Provide(func() (*migrate.Migrate, error) {
-			return New(mig, cfg, migrations)
+			return NewPostgresMigrations(mig, cfg, migrations, "migrations")
 		}),
 	)
 }
 
-func (p *PostgresConfig) MigrationConnectionString() string {
+func (p *PostgresConfig) ConnectionString() string {
+	if p.Schema == "" {
+		p.Schema = "public"
+	}
+
 	host := net.JoinHostPort(p.Host, strconv.FormatInt(int64(p.Port), 10))
 	return fmt.Sprintf(
-		"postgres://%s:%s@%s/%s?search_path=%s&sslmode=%s&application_name=%s&x-migrations-table=migrations&x-multi-statements=true",
+		"postgres://%s:%s@%s/%s?search_path=%s&sslmode=%s&application_name=%s&timezone=%s",
 		p.Username,
 		p.Password,
 		host,
@@ -79,34 +106,6 @@ func (p *PostgresConfig) MigrationConnectionString() string {
 		p.Schema,
 		p.SslMode,
 		p.ApplicationName,
-	)
-}
-
-func (p *PostgresConfig) ConnectionString() string {
-	if p.Schema == "" {
-		return fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s application_name=%s",
-			p.Host,
-			p.Username,
-			p.Password,
-			p.DBName,
-			p.Port,
-			p.SslMode,
-			p.Timezone,
-			p.ApplicationName,
-		)
-	}
-
-	return fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s search_path=%s application_name=%s",
-		p.Host,
-		p.Username,
-		p.Password,
-		p.DBName,
-		p.Port,
-		p.SslMode,
 		p.Timezone,
-		p.Schema,
-		p.ApplicationName,
 	)
 }
