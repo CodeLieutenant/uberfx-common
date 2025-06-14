@@ -1,14 +1,18 @@
 # Changelog
 
-## [v3.1.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2025-06-14)
+## [v3.2.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2025-06-14)
+
+[Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v3.1.0...v3.2.0)
+
+## [v3.1.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2025-06-14)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v3.0.1...v3.1.0)
 
-## [v3.0.1](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2025-03-26)
+## [v3.0.1](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2025-03-26)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v3.0.0...v3.0.1)
 
-## [v3.0.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2024-05-07)
+## [v3.0.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2024-05-07)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v2.0.2...v3.0.0)
 
@@ -17,19 +21,19 @@
 - Feat/amqp [\#7](https://github.com/CodeLieutenant/uberfx-common/pull/7) ([CodeLieutenant](https://github.com/CodeLieutenant))
 - Feat/v3 [\#2](https://github.com/CodeLieutenant/uberfx-common/pull/2) ([CodeLieutenant](https://github.com/CodeLieutenant))
 
-## [v2.0.2](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2024-03-21)
+## [v2.0.2](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2024-03-21)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v2.0.1...v2.0.2)
 
-## [v2.0.1](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2024-03-21)
+## [v2.0.1](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2024-03-21)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v2.0.0...v2.0.1)
 
-## [v2.0.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2024-03-21)
+## [v2.0.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2024-03-21)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/v1.0.0...v2.0.0)
 
-## [v1.0.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.1.0) (2024-01-15)
+## [v1.0.0](https://github.com/CodeLieutenant/uberfx-common/releases/tag/v3.2.0) (2024-01-15)
 
 [Full Changelog](https://github.com/CodeLieutenant/uberfx-common/compare/a2602373a7b5eb732ae4e601861b3e0d4674d5a1...v1.0.0)
 
