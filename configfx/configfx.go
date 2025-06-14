@@ -1,21 +1,28 @@
 package configfx
 
 import (
-	utilsconfig "github.com/nano-interactive/go-utils/v2/config"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
+
+	utilsconfig "github.com/nano-interactive/go-utils/v2/config"
 )
 
-func New[T any](appName string) (T, error) {
+func New[T any](appName string, paths ...string) (T, error) {
+	ps := []string{
+		"$XDG_CONFIG_HOME/" + appName,
+		"/etc/" + appName,
+		".",
+	}
+
+	if len(paths) > 0 {
+		ps = append(ps, paths...)
+	}
+
 	v, err := utilsconfig.NewWithModifier(utilsconfig.Config{
 		ProjectName: appName,
 		Name:        "config",
 		Type:        "yaml",
-		Paths: []string{
-			"$XDG_CONFIG_HOME/" + appName,
-			"/etc/" + appName,
-			".",
-		},
+		Paths:       ps,
 	})
 	if err != nil {
 		var t T
