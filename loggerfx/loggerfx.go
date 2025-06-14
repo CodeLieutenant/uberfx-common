@@ -1,6 +1,7 @@
 package loggerfx
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
@@ -24,9 +25,10 @@ type (
 )
 
 const (
-	Stdout SinkType = iota
+	Stdout SinkType = iota << 1
 	Stderr
 	File
+	BufferedIO
 )
 
 var (
@@ -47,7 +49,7 @@ func ZerologModule(sink Sink) fx.Option {
 				lc.Append(fx.StopHook(closer))
 			}
 
-			return appLogger.New(sink.Level, sink.PrettyPrint).
+			return appLogger.New(sink.Level, false).
 				Output(w).
 				With().
 				Stack().
@@ -65,7 +67,7 @@ func ZerologModule(sink Sink) fx.Option {
 
 			//nolint:all
 			zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-			appLogger.ConfigureDefaultLogger(sink.Level, sink.PrettyPrint, w)
+			appLogger.ConfigureDefaultLogger(sink.Level, false, w)
 
 			return nil
 		}),
@@ -75,44 +77,97 @@ func ZerologModule(sink Sink) fx.Option {
 func getZerologWriter(sink Sink) (io.Writer, func() error, error) {
 	switch sink.Type {
 	case Stdout:
+		buffer := bufio.NewWriterSize(os.Stdout, 32*1024)
+
 		if sink.PrettyPrint {
-			return zerolog.NewConsoleWriter(), nil, nil
+			options := []func(w *zerolog.ConsoleWriter){
+				func(w *zerolog.ConsoleWriter) {
+					w.Out = bufio.NewWriterSize(os.Stdin, 32*1024)
+				},
+			}
+			if len(sink.Args) > 0 {
+				for _, arg := range sink.Args {
+					switch vals := arg.(type) {
+					case []func(w *zerolog.ConsoleWriter):
+						options = append(options, vals...)
+					case func(w *zerolog.ConsoleWriter):
+						options = append(options, vals)
+					default:
+						return nil, nil, fmt.Errorf("invalid type for sink.Args: %T", vals)
+					}
+				}
+			}
+
+			return zerolog.NewConsoleWriter(options...), nil, nil
 		}
 
-		return os.Stdout, nil, nil
+		return buffer, buffer.Flush, nil
 	case Stderr:
+		buffer := bufio.NewWriterSize(os.Stderr, 32*1024)
+
 		if sink.PrettyPrint {
-			return zerolog.NewConsoleWriter(func(w *zerolog.ConsoleWriter) {
-				w.Out = os.Stderr
-			}), nil, nil
+			options := []func(w *zerolog.ConsoleWriter){
+				func(w *zerolog.ConsoleWriter) {
+					w.Out = buffer
+				},
+			}
+
+			if len(sink.Args) > 0 {
+				for _, arg := range sink.Args {
+					switch vals := arg.(type) {
+					case []func(w *zerolog.ConsoleWriter):
+						options = append(options, vals...)
+					case func(w *zerolog.ConsoleWriter):
+						options = append(options, vals)
+					default:
+						return nil, nil, fmt.Errorf("invalid type for sink.Args: %T", vals)
+					}
+				}
+			}
+
+			return zerolog.NewConsoleWriter(options...), nil, nil
 		}
 
-		return os.Stderr, nil, nil
-	case File:
-		if len(sink.Args) == 0 {
-			return nil, nil, ErrArgForFileNotProvided
-		}
-
-		var path string
-
-		switch val := sink.Args[0].(type) {
-		case string:
-			path = val
-		case fmt.Stringer:
-			path = val.String()
-		default:
-			return nil, nil, ErrUnexpectedArgForFileType
-		}
-
-		f, err := utils.CreateLogFile(path)
+		return buffer, buffer.Flush, nil
+	case BufferedIO:
+		buffer, err := newNonBlockingBufferedWriter(sink)
 		if err != nil {
 			return nil, nil, err
 		}
 
-		return f, func() error {
-			return f.Close()
-		}, nil
+		return buffer, buffer.Close, nil
+	case File:
+		f, err := extractFile(sink)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		return f, f.Close, nil
 	default:
 		return nil, nil, ErrInvalidSinkType
 	}
+}
+
+func extractFile(sink Sink) (*os.File, error) {
+	if len(sink.Args) == 0 {
+		return nil, ErrArgForFileNotProvided
+	}
+
+	var path string
+
+	switch val := sink.Args[0].(type) {
+	case string:
+		path = val
+	case fmt.Stringer:
+		path = val.String()
+	default:
+		return nil, ErrUnexpectedArgForFileType
+	}
+
+	f, err := utils.CreateLogFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return f, nil
 }
