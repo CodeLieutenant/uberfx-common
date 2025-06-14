@@ -1,32 +1,13 @@
+version: "2"
 run:
   concurrency: 16
-  timeout: 5m
+  go: "1.24"
+  modules-download-mode: mod
   issues-exit-code: 1
   tests: true
-  go: '1.22'
-  modules-download-mode: mod
   allow-parallel-runners: true
-
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - gocyclo
-        - errcheck
-        - dupl
-        - gosec
-  exclude-files:
-    - .*_gen\.go$
-    - .*setup\.go$
-
-output:
-  print-issued-lines: true
-  print-linter-name: true
-  uniq-by-line: true
-  sort-results: true
-
 linters:
-  disable-all: true
+  default: none
   enable:
     - asasalint
     - bidichk
@@ -34,13 +15,12 @@ linters:
     - decorder
     - dupl
     - durationcheck
+    - err113
     - errcheck
     - errchkjson
     - errname
     - errorlint
-    - exportloopref
     - forbidigo
-    - gofumpt
     - ginkgolinter
     - gocheckcompilerdirectives
     - gocognit
@@ -48,13 +28,10 @@ linters:
     - gocritic
     - gocyclo
     - godox
-    - goerr113
     - goheader
-    - goimports
     - gomodguard
     - goprintffuncname
     - gosec
-    - gosimple
     - gosmopolitan
     - govet
     - grouper
@@ -75,6 +52,7 @@ linters:
     - nonamedreturns
     - nosprintfhostport
     - paralleltest
+    - perfsprint
     - prealloc
     - predeclared
     - promlinter
@@ -83,8 +61,6 @@ linters:
     - rowserrcheck
     - sqlclosecheck
     - staticcheck
-    - stylecheck
-    - tenv
     - testableexamples
     - testpackage
     - thelper
@@ -96,5 +72,51 @@ linters:
     - wastedassign
     - whitespace
     - zerologlint
-    - prealloc
-    - perfsprint
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - dupl
+          - errcheck
+          - gocyclo
+          - gosec
+        path: _test\.go
+    paths:
+      - .*_gen\.go$
+      - .*setup\.go$
+      - third_party$
+      - builtin$
+      - examples$
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+    - gci
+    - golines
+  settings:
+    gofumpt:
+      extra-rules: true
+    goimports:
+      local-prefixes:
+        - github.com/scylladb/gemini
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/scylladb/gemini)
+      no-inline-comments: true
+    golines:
+      max-len: 180
+      shorten-comments: true
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

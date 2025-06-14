@@ -3,10 +3,10 @@ version: '3'
 tasks:
   fmt:
     cmds:
-      - go tool gofumpt -l -w .
+      - go tool golangci-lint fmt
   lint:
     cmds:
-      - go tool golangci-lint run --color "always" -v -j 8
+      - go tool golangci-lint run --color "always"
   sec:
     cmds:
       - go tool gosec ./...
@@ -24,5 +24,3 @@ tasks:
   test:
     cmds:
       - go test -covermode=atomic -race -coverprofile=coverage.txt -timeout 5m -json -v ./... | go tool gotestfmt -showteststatus
-    env:
-        GOMAXPROCS: 8

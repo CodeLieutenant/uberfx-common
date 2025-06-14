@@ -3,13 +3,11 @@ package fiber_test
 import (
 	"testing"
 
-	gofiber "github.com/gofiber/fiber/v2"
-	"github.com/valyala/fasthttp"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/CodeLieutenant/uberfx-common/v3/constants"
 	"github.com/CodeLieutenant/uberfx-common/v3/http/fiber"
+	gofiber "github.com/gofiber/fiber/v2"
+	"github.com/stretchr/testify/require"
+	"github.com/valyala/fasthttp"
 )
 
 func TestContextMiddleware(t *testing.T) {

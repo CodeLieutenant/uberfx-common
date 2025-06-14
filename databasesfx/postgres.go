@@ -8,32 +8,30 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/jackc/pgx/v5/stdlib"
-
 	"github.com/golang-migrate/migrate/v4"
 	migratepgx "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/stdlib"
 	"go.uber.org/fx"
 )
 
 type PostgresConfig struct {
-	ApplicationName       string        `required:"true" mapstructure:"application_name" yaml:"application_name" json:"application_name"`
-	Timezone              string        `required:"true" default:"UTC" mapstructure:"timezone" yaml:"timezone" json:"timezone"`
-	DBName                string        `required:"true" mapstructure:"dbname" yaml:"dbname" json:"dbname"`
-	Schema                string        `required:"true" default:"public" mapstructure:"schema" yaml:"schema" json:"schema"`
-	Host                  string        `required:"true" default:"localhost" mapstructure:"host" yaml:"host" json:"host"`
-	SslMode               string        `required:"true" default:"disable" mapstructure:"ssl_mode" yaml:"ssl_mode" json:"ssl_mode"`
-	Password              string        `required:"true" yaml:"password" mapstructure:"password" json:"password"`
-	Username              string        `required:"true" yaml:"username" mapstructure:"username" json:"username"`
-	MaxIdleConnection     int           `required:"true" mapstructure:"max_idle_connections" yaml:"max_idle_connections" json:"max_idle_connections"`
-	ConnectionTimeout     time.Duration `required:"true" default:"5s"  mapstructure:"connection_timeout" yaml:"connection_timeout" json:"connection_timeout"`
-	MaxOpenConnections    int           `required:"true" mapstructure:"max_open_connections" yaml:"max_open_connections" json:"max_open_connections"`
-	MaxConnectionLifetime time.Duration `required:"true" mapstructure:"max_connection_lifetime" yaml:"max_connection_lifetime" json:"max_connection_lifetime"`
+	ApplicationName       string        `required:"true" mapstructure:"application_name"         yaml:"application_name"         json:"application_name"`
+	Timezone              string        `required:"true" mapstructure:"timezone"                 yaml:"timezone"                 json:"timezone"                 default:"UTC"`
+	DBName                string        `required:"true" mapstructure:"dbname"                   yaml:"dbname"                   json:"dbname"`
+	Schema                string        `required:"true" mapstructure:"schema"                   yaml:"schema"                   json:"schema"                   default:"public"`
+	Host                  string        `required:"true" mapstructure:"host"                     yaml:"host"                     json:"host"                     default:"localhost"`
+	SslMode               string        `required:"true" mapstructure:"ssl_mode"                 yaml:"ssl_mode"                 json:"ssl_mode"                 default:"disable"`
+	Password              string        `required:"true" mapstructure:"password"                 yaml:"password"                 json:"password"`
+	Username              string        `required:"true" mapstructure:"username"                 yaml:"username"                 json:"username"`
+	MaxIdleConnection     int           `required:"true" mapstructure:"max_idle_connections"     yaml:"max_idle_connections"     json:"max_idle_connections"`
+	ConnectionTimeout     time.Duration `required:"true" mapstructure:"connection_timeout"       yaml:"connection_timeout"       json:"connection_timeout"       default:"5s"`
+	MaxOpenConnections    int           `required:"true" mapstructure:"max_open_connections"     yaml:"max_open_connections"     json:"max_open_connections"`
+	MaxConnectionLifetime time.Duration `required:"true" mapstructure:"max_connection_lifetime"  yaml:"max_connection_lifetime"  json:"max_connection_lifetime"`
 	MaxConnectionIdleTime time.Duration `required:"true" mapstructure:"max_connection_idle_time" yaml:"max_connection_idle_time" json:"max_connection_idle_time"`
-	Port                  uint16        `required:"true" default:"5432" mapstructure:"port" yaml:"port" json:"port"`
+	Port                  uint16        `required:"true" mapstructure:"port"                     yaml:"port"                     json:"port"                     default:"5432"`
 }
 
 func NewPostgresMigrations(fs fs.FS, cfg PostgresConfig, migrations, migrationsTable string) (*migrate.Migrate, error) {
@@ -55,7 +53,6 @@ func NewPostgresMigrations(fs fs.FS, cfg PostgresConfig, migrations, migrationsT
 		MigrationsTableQuoted: false,
 		MultiStatementEnabled: true,
 	})
-
 	if err != nil {
 		return nil, err
 	}

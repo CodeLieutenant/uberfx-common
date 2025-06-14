@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rabbitmq/amqp091-go"
-	"go.uber.org/fx"
-
 	"github.com/nano-interactive/go-amqp/v3/connection"
 	"github.com/nano-interactive/go-amqp/v3/consumer"
+	"github.com/rabbitmq/amqp091-go"
+	"go.uber.org/fx"
 )
 
 func ConsumerModuleFunc[T consumer.Message](

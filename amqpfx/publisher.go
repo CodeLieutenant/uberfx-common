@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"go.uber.org/fx"
-
 	"github.com/nano-interactive/go-amqp/v3/connection"
 	"github.com/nano-interactive/go-amqp/v3/publisher"
+	"go.uber.org/fx"
 )
 
 func GetPublisherName(connectionName, exchangeName string) string {
@@ -43,7 +42,6 @@ func PublisherModule[T any](
 	},
 		fx.ResultTags(
 			GetPublisherParamName(connectionOptions.ConnectionName, exchangeName)),
-			fx.As(new(publisher.Pub[T]),
-		),
+		fx.As(new(publisher.Pub[T])),
 	)))
 }

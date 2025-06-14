@@ -3,11 +3,10 @@ package fiber
 import (
 	"errors"
 
-	"github.com/rs/zerolog/log"
-
 	gofiber "github.com/gofiber/fiber/v2"
 	"github.com/invopop/validation"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

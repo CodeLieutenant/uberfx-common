@@ -2,7 +2,6 @@ package configfx
 
 import (
 	utilsconfig "github.com/nano-interactive/go-utils/v2/config"
-
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )

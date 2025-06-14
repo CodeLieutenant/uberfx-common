@@ -74,6 +74,7 @@ func ZerologModule(sink Sink) fx.Option {
 	)
 }
 
+//nolint:gocognit
 func getZerologWriter(sink Sink) (io.Writer, func() error, error) {
 	switch sink.Type {
 	case Stdout:
@@ -93,7 +94,7 @@ func getZerologWriter(sink Sink) (io.Writer, func() error, error) {
 					case func(w *zerolog.ConsoleWriter):
 						options = append(options, vals)
 					default:
-						return nil, nil, fmt.Errorf("invalid type for sink.Args: %T", vals)
+						return nil, nil, fmt.Errorf("invalid type for sink.Args: %T", vals) //nolint:err113
 					}
 				}
 			}
@@ -120,7 +121,7 @@ func getZerologWriter(sink Sink) (io.Writer, func() error, error) {
 					case func(w *zerolog.ConsoleWriter):
 						options = append(options, vals)
 					default:
-						return nil, nil, fmt.Errorf("invalid type for sink.Args: %T", vals)
+						return nil, nil, fmt.Errorf("invalid type for sink.Args: %T", vals) //nolint:err113
 					}
 				}
 			}
