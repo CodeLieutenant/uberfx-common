@@ -104,12 +104,12 @@ formatters:
       extra-rules: true
     goimports:
       local-prefixes:
-        - github.com/scylladb/gemini
+        - github.com/CodeLieutenant/uberfx-common/v3
     gci:
       sections:
         - standard
         - default
-        - prefix(github.com/scylladb/gemini)
+        - prefix(github.com/CodeLieutenant/uberfx-common/v3)
       no-inline-comments: true
     golines:
       max-len: 180

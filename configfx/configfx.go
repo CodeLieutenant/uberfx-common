@@ -1,10 +1,9 @@
 package configfx
 
 import (
+	utilsconfig "github.com/nano-interactive/go-utils/v2/config"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
-
-	utilsconfig "github.com/nano-interactive/go-utils/v2/config"
 )
 
 func New[T any](appName string, paths ...string) (T, error) {

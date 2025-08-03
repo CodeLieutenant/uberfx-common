@@ -53,3 +53,15 @@ func Routes(routes []RouteFx, opts ...RouteOptions) RoutesFx {
 		return fx.Options(options...)
 	}
 }
+
+func CombineRoutes(routes ...RoutesFx) RoutesFx {
+	return func(appName string) fx.Option {
+		options := make([]fx.Option, 0, len(routes))
+
+		for _, route := range routes {
+			options = append(options, route(appName))
+		}
+
+		return fx.Options(options...)
+	}
+}

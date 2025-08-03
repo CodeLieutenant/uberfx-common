@@ -4,10 +4,11 @@ import (
 	"context"
 	"time"
 
-	corehttp "github.com/CodeLieutenant/uberfx-common/v3/http/fiber"
 	"github.com/gofiber/fiber/v2"
 	"github.com/samber/lo"
 	"go.uber.org/fx"
+
+	corehttp "github.com/CodeLieutenant/uberfx-common/v3/http/fiber"
 )
 
 type (

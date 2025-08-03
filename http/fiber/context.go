@@ -3,8 +3,9 @@ package fiber
 import (
 	"context"
 
-	"github.com/CodeLieutenant/uberfx-common/v3/constants"
 	gofiber "github.com/gofiber/fiber/v2"
+
+	"github.com/CodeLieutenant/uberfx-common/v3/constants"
 )
 
 func Context() gofiber.Handler {
