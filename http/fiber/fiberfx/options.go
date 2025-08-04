@@ -4,8 +4,9 @@ import "github.com/gofiber/fiber/v2"
 
 type (
 	appOptions struct {
-		afterCreate func(app *fiber.App)
-		cfg         fiber.Config
+		afterCreate    func(app *fiber.App)
+		cfg            fiber.Config
+		useMiddlewares bool
 	}
 
 	Option func(opts *appOptions)

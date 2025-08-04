@@ -55,15 +55,76 @@ func App(appName string, routes RoutesFx, options ...Option) fx.Option {
 		opt(&opts)
 	}
 
-	return fx.Module("fiber-"+appName,
-		fx.Supply(fx.Annotate(
-			&routerCallbacks{
-				cbs: make([]routerCallback, 0),
+	var appProvide fx.Option
+
+	// Define a struct to inject the middlewares
+	type middlewareIn struct {
+		fx.In
+
+		Handlers    []route                `group:"fiber-handlers"`
+		Callbacks   *routerCallbacks       `name:"fiber-router-callbacks"`
+		Middlewares []middlewareWithPrefix `group:"fiber-middlewares"`
+	}
+
+	if opts.useMiddlewares {
+		// If middleware injection is enabled, include middlewares in the app creation
+		appProvide = fx.Provide(fx.Annotate(
+			func(handlers []route, cbs *routerCallbacks, middlewares []middlewareWithPrefix) *fiber.App {
+				app := corehttp.CreateApplication(opts.afterCreate, opts.cfg)
+
+				// Apply middlewares first
+				applyMiddlewares(app, middlewares)
+
+				for _, r := range handlers {
+					var router fiber.Router
+
+					if r.Prefix != "" {
+						router = app.Group(r.Prefix)
+					} else {
+						router = app
+					}
+
+					cb, exists := cbs.Find(r.Prefix)
+
+					if exists {
+						cb.Callback(router)
+					}
+
+					// Create a handler chain with route-specific middleware
+					var handlers []fiber.Handler
+					if len(r.Middlewares) > 0 {
+						handlers = append(handlers, r.Middlewares...)
+					}
+					handlers = append(handlers, r.Handler)
+
+					// Add the route with middleware
+					var rt fiber.Router
+					if len(handlers) == 1 {
+						// No middleware, just add the handler directly
+						rt = router.Add(r.Method, r.Path, r.Handler)
+					} else {
+						// Apply middleware to this specific route
+						rt = router.Add(r.Method, r.Path, handlers...)
+					}
+
+					// Apply callback if provided
+					if r.CallBack != nil {
+						r.CallBack(rt)
+					}
+				}
+
+				return app
 			},
-			fx.ResultTags(routerCallbacksName(appName)),
-		)),
-		routes(appName),
-		fx.Provide(fx.Annotate(
+			fx.ParamTags(
+				fiberHandlerRoutes(appName),
+				routerCallbacksName(appName),
+				`group:"fiber-middlewares"`,
+			),
+			fx.ResultTags(GetFiberApp(appName)),
+		))
+	} else {
+		// Backward compatibility: don't include middlewares
+		appProvide = fx.Provide(fx.Annotate(
 			func(handlers []route, cbs *routerCallbacks) *fiber.App {
 				app := corehttp.CreateApplication(opts.afterCreate, opts.cfg)
 
@@ -82,7 +143,25 @@ func App(appName string, routes RoutesFx, options ...Option) fx.Option {
 						cb.Callback(router)
 					}
 
-					if rt := router.Add(r.Method, r.Path, r.Handler); r.CallBack != nil {
+					// Create a handler chain with route-specific middleware
+					var handlers []fiber.Handler
+					if len(r.Middlewares) > 0 {
+						handlers = append(handlers, r.Middlewares...)
+					}
+					handlers = append(handlers, r.Handler)
+
+					// Add the route with middleware
+					var rt fiber.Router
+					if len(handlers) == 1 {
+						// No middleware, just add the handler directly
+						rt = router.Add(r.Method, r.Path, r.Handler)
+					} else {
+						// Apply middleware to this specific route
+						rt = router.Add(r.Method, r.Path, handlers...)
+					}
+
+					// Apply callback if provided
+					if r.CallBack != nil {
 						r.CallBack(rt)
 					}
 				}
@@ -94,7 +173,18 @@ func App(appName string, routes RoutesFx, options ...Option) fx.Option {
 				routerCallbacksName(appName),
 			),
 			fx.ResultTags(GetFiberApp(appName)),
+		))
+	}
+
+	return fx.Module("fiber-"+appName,
+		fx.Supply(fx.Annotate(
+			&routerCallbacks{
+				cbs: make([]routerCallback, 0),
+			},
+			fx.ResultTags(routerCallbacksName(appName)),
 		)),
+		routes(appName),
+		appProvide,
 	)
 }
 
