@@ -1,7 +1,6 @@
 package fiberfx_test
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -440,10 +439,10 @@ func TestRunApp(t *testing.T) {
 	)
 
 	// Start the app
-	app.Start(context.Background())
+	require.NoError(t, app.Start(t.Context()))
 
 	// Stop the app
-	app.Stop(context.Background())
+	require.NoError(t, app.Stop(t.Context()))
 
 	// Verify that the app was created and started/stopped without errors
 	require.NotNil(t, app)

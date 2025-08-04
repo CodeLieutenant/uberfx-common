@@ -23,4 +23,4 @@ tasks:
       - go tool fieldalignment -fix ./...
   test:
     cmds:
-      - go test -covermode=atomic -coverprofile=coverage.txt -timeout 5m -json -v ./... | go tool gotestfmt -showteststatus
+      - go test -tags testing -race -covermode=atomic -coverprofile=coverage.txt -timeout 5m -json -v ./... | go tool gotestfmt -showteststatus

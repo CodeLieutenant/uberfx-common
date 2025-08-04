@@ -157,14 +157,27 @@ func RouteWithMiddleware(method, path string, cb func(fiber.Router), middlewares
 			if h, ok := handler.(func(*fiber.Ctx) error); ok {
 				return h
 			}
+			// If it's a function that returns a fiber.Handler, call it to get the handler
+			if h, ok := handler.(func() fiber.Handler); ok {
+				return h()
+			}
+			// If it's a function that returns a fiber.Handler function, call it to get the handler
+			if h, ok := handler.(func() func(*fiber.Ctx) error); ok {
+				return h()
+			}
 			// Otherwise, panic as we can't handle this type
 			panic(fmt.Sprintf("handler must be a fiber.Handler or func(*fiber.Ctx) error, got %T", handler))
 		}
 
-		return fx.Provide(
-			// Provide the handler wrapper function
+ 	// Call handlerWrapper to get the actual handler
+	handler := handlerWrapper()
+
+	return fx.Provide(
+			// Provide the handler directly
 			fx.Annotate(
-				handlerWrapper,
+				func() fiber.Handler {
+					return handler
+				},
 				fx.ResultTags(fiberHandlers(appName, method, prefix, path)),
 			),
 			// Create the route with the handler
@@ -200,14 +213,27 @@ func RouteWithMiddlewareFx(method, path string, cb func(fiber.Router), middlewar
 			if h, ok := handler.(func(*fiber.Ctx) error); ok {
 				return h
 			}
+			// If it's a function that returns a fiber.Handler, call it to get the handler
+			if h, ok := handler.(func() fiber.Handler); ok {
+				return h()
+			}
+			// If it's a function that returns a fiber.Handler function, call it to get the handler
+			if h, ok := handler.(func() func(*fiber.Ctx) error); ok {
+				return h()
+			}
 			// Otherwise, panic as we can't handle this type
 			panic(fmt.Sprintf("handler must be a fiber.Handler or func(*fiber.Ctx) error, got %T", handler))
 		}
 
+		// Call handlerWrapper to get the actual handler
+		handler := handlerWrapper()
+
 		// Create options for registering the handler
 		handlerOption := fx.Provide(
 			fx.Annotate(
-				handlerWrapper,
+				func() fiber.Handler {
+					return handler
+				},
 				fx.ResultTags(fiberHandlers(appName, method, prefix, path)),
 			),
 		)

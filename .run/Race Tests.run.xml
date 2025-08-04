@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Race Tests" type="GoTestRunConfiguration" factoryName="Go Test">
+    <module name="fiberfx" />
+    <working_directory value="$PROJECT_DIR$" />
+    <go_parameters value="-race -tags testing -timeout 5m -v ./..." />
+    <kind value="DIRECTORY" />
+    <package value="github.com/CodeLieutenant/uberfx-common/v3" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>
